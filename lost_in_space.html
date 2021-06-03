@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="Audic XU">
+  <meta name="author" content="Tasnim LAIOUAR">
+  <title>Lost in space</title>
+  <script src="lost_in_space.js" type="text/javascript">
+  </script>
+  <style>
+      canvas {
+          background-color: black;
+      }
+  </style>
+</head>
+<body>
+<canvas id="game_area" width="600" height="600" style="background: url(
+  background.jpg)
+  no-repeat center center;
+   border: solid #000000;"></canvas>
+<canvas id="canvas2" width="600" height="600" style="background: url(
+  rules2.png)
+  no-repeat center center;
+   border: solid #000000;">>   
+
+<script>
+  const canvas = document.getElementById('game_area');
+  const ctx = canvas.getContext('2d');
+
+  window.onload = function(){
+    const t1 = 30;
+    const t2 = 30;
+    const t3 = 15;
+    const t4 = 15;
+    const alien_dx = 2;
+    const alien_dy = -2;
+    const SpaceShipSpeed = 5;
+    const game = new lost_in_space(ctx, t1, t2, t3, t4, alien_dx,
+                                   alien_dy, SpaceShipSpeed);
+    game.draw();
+    const keys = {
+      "ArrowLeft": {down: false, action: function() {game.refreshSelf("ArrowLeft");}},
+      "ArrowUp": {down: false, action: function () {game.refreshSelf("ArrowUp");}},
+      "ArrowRight": {down: false, action: function() {game.refreshSelf("ArrowRight");}},
+      "ArrowDown": {down: false, action: function() {game.refreshSelf("ArrowDown");}}
+    };
+
+    document.addEventListener("keydown", function (e) {
+      if(e.key === " "){
+        game.createBullet();
+      }
+      else{
+        if (keys[e.key]) {
+          keys[e.key].down = true;
+        }
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (keys[e.key]){
+        keys[e.key].down = true;
+      }
+    });
+    document.addEventListener("keyup", function (e) {
+      if (keys[e.key] && e.key !== " "){
+        keys[e.key].down = false;
+      }
+    });
+
+
+    window.setInterval(function () {
+      for (let key in keys) {
+        if (keys[key].down) {
+          keys[key].action();
+        }
+      }
+      game.draw();
+      game.refreshBullets();
+      game.refreshAliens();
+      game.refreshAddAliens();
+      game.checkCrash();
+      game.checkBullet();
+      game.checkSelf();
+
+      // 16.7 ms corresponds to 60 fps
+    }, 16.7);
+  }
+
+</script>
+
+
+</body>
+</html>
